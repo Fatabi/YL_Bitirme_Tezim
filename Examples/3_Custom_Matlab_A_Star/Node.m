@@ -15,7 +15,7 @@ classdef Node<handle
         end
         function calculate_g_Score(obj)
             if (~isempty(obj.cameFrom))
-                obj.gScore = obj.cameFrom.gScore + Node.FindDistance(obj,obj.cameFrom);
+                obj.gScore = obj.cameFrom.gScore + Node.FindDistance(obj,obj.cameFrom)*0.1;
             end
         end
         function calculate_h_Score(obj,endNode)
@@ -25,13 +25,38 @@ classdef Node<handle
             obj.fScore = obj.gScore + obj.hScore;
         end
         function updateNeighbours(obj,map)
-            i = obj.location(1);
-            j = obj.location(2);
+            idx = map.location_2_idx(obj.location);
+            i = idx(1);
+            j = idx(2);
 
-            obj.neighbours{1,1} = map.nodes{i-1,j};
-            obj.neighbours{1,2} = map.nodes{i,j+1};
-            obj.neighbours{1,3} = map.nodes{i+1,j};
-            obj.neighbours{1,4} = map.nodes{i,j-1};
+            iMin = 1;
+            iMax = map.sy;
+            jMin = 1;
+            jMax = map.sx;
+
+            if i <= iMin
+                obj.neighbours{1,1} = {};
+            else
+                obj.neighbours{1,1} = map.nodes{i-1,j};
+            end
+            if j >= jMax
+                obj.neighbours{1,2} ={};
+            else
+                obj.neighbours{1,2} = map.nodes{i,j+1};
+            end
+
+            if i >= iMax
+                obj.neighbours{1,3} = {};
+            else
+                obj.neighbours{1,3} = map.nodes{i+1,j};
+            end
+
+            if j <= jMin
+                obj.neighbours{1,4} = {};
+            else
+                obj.neighbours{1,4} = map.nodes{i,j-1};
+            end
+            
         end
     end
     methods(Static)
