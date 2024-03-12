@@ -1,0 +1,82 @@
+classdef Node<handle
+    properties
+        state
+        controlInputSet
+        neighbours
+        cameFrom Node
+        gScore = 0 % Cost from Start Node
+        hScore = inf % Cost from End Node
+        fScore = inf % Final Cost hScore + gScore
+        chasisLength_m
+        ODE_Solver_Fcn
+    end
+
+    methods
+        function obj = Node(state,controlInputSet)
+                obj.state           = state;    
+                obj.controlInputSet = controlInputSet;
+                obj.neighbours      = cell(1,length(controlInputSet));
+                obj.chasisLength_m  = 1;
+                obj.ODE_Solver_Fcn  = @Solver.Heun;
+        end
+        function calculate_g_Score(obj)
+            if (~isempty(obj.cameFrom))
+                obj.gScore = obj.cameFrom.gScore + Node.FindDistance(obj,obj.cameFrom)*0.1;
+            end
+        end
+        function calculate_h_Score(obj,endNode)
+            obj.hScore = Node.FindDistance(obj,endNode);
+        end
+        function calculate_f_Score(obj)
+            obj.fScore = obj.gScore + obj.hScore;
+        end
+        function updateNeighbours(obj,map)
+           
+            
+        end
+
+        %% Simulation Functions
+        function states = simulate(obj,controlInput,tSpan)
+            u       = [controlInput.velocity_m_s,controlInput.steeringAngle_deg];
+            fcn     = @(y,t)obj.EoM(y,t,u);
+            states  = obj.ODE_Solver_Fcn(fcn,obj.state,tSpan);
+        end
+        function states = simulateInputSet(obj)
+            sx     = length(obj.controlInputSet.set);
+            tSpan  = obj.controlInputSet.tSpan;
+            states = cell(sx,1); 
+            for i = 1:sx
+                controlInput = obj.controlInputSet.set(i);
+                states{i}   = simulate(obj,controlInput,tSpan);
+            end
+        end
+        function statesDot = EoM(obj,states,t,controlInputs) % Equations of Motion
+            % x_m                 = states(1);
+            % y_m                 = states(2);
+            theta_deg           = states(3);
+            theta_rad           = deg2rad(theta_deg);
+            velocity_m_s        = controlInputs(1);
+            steeringAngle_deg   = controlInputs(2);
+
+            l_m             = obj.chasisLength_m;
+            alpha_deg       = steeringAngle_deg;
+            alpha_rad       = deg2rad(alpha_deg);
+
+            R_m             = l_m/tan(alpha_rad); %instantaneous turning radious
+
+            x_dot_m_s       = velocity_m_s*cos(theta_rad);
+            y_dot_m_s       = velocity_m_s*sin(theta_rad);
+            theta_dot_rad_s = velocity_m_s./R_m;
+            theta_dot_deg_s = rad2deg(theta_dot_rad_s);
+
+            statesDot = [x_dot_m_s,y_dot_m_s,theta_dot_deg_s];
+        end
+    end
+    methods(Static)
+        function length = FindDistance(Node1,Node2)
+                deltaLoc = (Node2.location - Node1.location);
+                length = sqrt(deltaLoc*deltaLoc');
+        end
+    end
+end
+
