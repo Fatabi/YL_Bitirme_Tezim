@@ -1,6 +1,6 @@
 classdef Node<handle
     properties
-        state % x,y,theta 
+        state
         statesOfBranches
         controlInputSet
         neighbours
@@ -22,17 +22,13 @@ classdef Node<handle
         end
         function calculate_g_Score(obj)
             if (~isempty(obj.cameFrom))
-                obj.gScore = obj.cameFrom.gScore + Node.FindDistance([obj.state(1),obj.state(2)],[obj.cameFrom.state(1),obj.cameFrom.state(2)])*0.1;
-            else
-                obj.gScore = 0;
+                obj.gScore = obj.cameFrom.gScore + Node.FindDistance(obj,obj.cameFrom)*0.1;
             end
         end
         function calculate_h_Score(obj,endPoint)
-            obj.hScore = Node.FindDistance([obj.state(1),obj.state(2)],endPoint);
+            obj.hScore = Node.FindDistance(obj,endPoint);
         end
         function calculate_f_Score(obj,endPoint)
-            obj.calculate_h_Score(endPoint);
-            obj.calculate_g_Score();
             obj.fScore = obj.gScore + obj.hScore;
         end
         function createNeighbours(obj,map)
@@ -82,8 +78,8 @@ classdef Node<handle
         end
     end
     methods(Static)
-        function length = FindDistance(Point1,Point2)
-                deltaLoc = (Point2 - Point1);
+        function length = FindDistance(Node1,Node2)
+                deltaLoc = (Node2.location - Node1.location);
                 length = sqrt(deltaLoc*deltaLoc');
         end
     end

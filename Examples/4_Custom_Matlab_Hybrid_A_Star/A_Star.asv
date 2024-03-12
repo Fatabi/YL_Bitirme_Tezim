@@ -67,14 +67,12 @@ classdef A_Star<handle
                     obj.pathLine.YData = [tempYdata,currentNode.state(2)];
                     drawnow();
                 end
-                if obj.drawNow && ~isempty(obj.branchLine)                                     
-                    for ii = 1:length(currentNode.neighbours)
-                        tempXdata = obj.branchLine.XData;
-                        tempYdata = obj.branchLine.YData;
-                        obj.branchLine.XData = [tempXdata,currentNode.statesOfBranches{ii}(:,1)'];
-                        obj.branchLine.YData = [tempYdata,currentNode.statesOfBranches{ii}(:,2)'];
-                    end
-                    drawnow();   
+                if obj.drawNow && ~isempty(obj.branchLine)
+                    tempXdata = obj.pathLine.XData;
+                    tempYdata = obj.pathLine.YData;
+                    obj.pathLine.XData = [tempXdata,currentNode.state(1)];
+                    obj.pathLine.YData = [tempYdata,currentNode.state(2)];
+                    drawnow();                    
                 end
             end
         end

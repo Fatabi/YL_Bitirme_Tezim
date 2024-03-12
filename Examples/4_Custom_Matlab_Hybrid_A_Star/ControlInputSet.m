@@ -6,18 +6,20 @@ classdef ControlInputSet<handle
     methods
         function obj  = ControlInputSet()
             obj.set   = ControlInputSet.CreateDefaultControlSet();
-            obj.tSpan = 0:0.1:1;
+            obj.tSpan = 0:0.05:0.5;
         end
     end
     methods(Static)
         function set = CreateDefaultControlSet()
-            turnLeftSet  = ControlInput(1,-30);
-            straightSet  = ControlInput(1,0);
-            turnRightSet = ControlInput(1,30);
+            vel_m_s = 5;
+            steeringAngle_mag_deg = 30;
+            turnLeftSet  = ControlInput(vel_m_s ,-steeringAngle_mag_deg);
+            straightSet  = ControlInput(vel_m_s ,0);
+            turnRightSet = ControlInput(vel_m_s ,steeringAngle_mag_deg);
 
-            turnBackLeftSet  =  ControlInput(-1,-30);
-            straightBackSet  =  ControlInput(-1,0);
-            turnRightBackSet =  ControlInput(-1,30);
+            turnBackLeftSet  =  ControlInput(-vel_m_s,-steeringAngle_mag_deg);
+            straightBackSet  =  ControlInput(-vel_m_s,0);
+            turnRightBackSet =  ControlInput(-vel_m_s,steeringAngle_mag_deg);
             set = [turnLeftSet,straightSet,turnRightSet,turnBackLeftSet,straightBackSet,turnRightBackSet];
         end
     end

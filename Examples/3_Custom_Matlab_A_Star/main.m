@@ -28,14 +28,14 @@ else
     % startPoint = [70,60];
     % endPoint   = [20,80];
     
-    % startPoint = [40,60];
-    % endPoint   = [60,90];
+    startPoint = [40,60];
+    endPoint   = [60,90];
     
     % startPoint = [10,80];
     % endPoint   = [10,10];
-
-    startPoint = [80,20];
-    endPoint   = [80,60];
+    % 
+    % startPoint = [80,20];
+    % endPoint   = [80,60];
 end
 scatter(startPoint(1),startPoint(2),200,'xg')
 scatter(endPoint(1),endPoint(2),200,'xr')
