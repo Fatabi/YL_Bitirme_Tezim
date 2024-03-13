@@ -38,9 +38,17 @@ classdef Node<handle
         function createNeighbours(obj,map)
            obj.statesOfBranches = obj.simulateInputSet();
            for i = 1:length(obj.statesOfBranches)
-               finalState = obj.statesOfBranches{i}(end,:);
-                obj.neighbours{i} = Node(finalState,obj.controlInputSet);
-                obj.neighbours{i}.cameFrom = obj;
+               currentStates = obj.statesOfBranches{i};
+    
+               finalState = currentStates (end,:);
+               hasHit = Node.CheckOccupancyHit(currentStates,map);
+               if hasHit
+                   obj.neighbours{i} = [];
+                   obj.statesOfBranches{i} = [];
+               else
+                   obj.neighbours{i} = Node(finalState,obj.controlInputSet);
+                   obj.neighbours{i}.cameFrom = obj;
+               end
            end
         end
 
@@ -85,6 +93,30 @@ classdef Node<handle
         function length = FindDistance(Point1,Point2)
                 deltaLoc = (Point2 - Point1);
                 length = sqrt(deltaLoc*deltaLoc');
+        end
+        function hasHit = CheckOccupancyHit(states,map)
+            k = flip(map.map.occupancyMatrix)';
+            bp1 = 1:map.sx;
+            bp2 = 1:map.sy;
+            v   = double(k);
+            [rn,~]=size(states);
+
+            for i = 1:rn-1
+                startXY = states(i,1:2);
+                endXY   = states(i+1,1:2);
+                deltaXY = endXY-startXY;
+                [azimuth,~,r ]= cart2sph(deltaXY(1),deltaXY(2),0);
+                rlist = 0:0.1:r;
+                listXY(:,1) = startXY(1) + rlist'.*cos(azimuth);
+                listXY(:,2) = startXY(2) + rlist'.*sin(azimuth);
+                res = interpn(bp1,bp2,v,listXY(:,1),listXY(:,2));
+                if any(res~=0)
+                    hasHit = true;
+                else
+                    hasHit = false;
+                end
+            end
+            % hasHit = false;
         end
     end
 end

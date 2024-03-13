@@ -4,11 +4,9 @@ close all
 addpath(genpath(cd))
 
 %% User Input
-image               = imread('Map_Big.png');
+image               = imread('Map_Big_v2.png');
 showMode            = true;
 controlInputSet     = ControlInputSet();
-
-
 
 %% Load Map
 bwimage   = image < 0.5;
@@ -29,21 +27,20 @@ if showMode == true
     disp("Select end point.")
     endPoint = round(ginput(1));
 else
-    startPoint = [70,60];
-    endPoint   = [20,80];
-    
-    % startPoint = [40,60];
-    % endPoint   = [60,90];
-    % 
+    % startPoint = [70,60];
+    % endPoint   = [20,80];
+
+    startPoint = [40,60];
+    endPoint   = [60,90];
+     
     % startPoint = [10,80];
     % endPoint   = [10,10];
-    % 
+     
     % startPoint = [80,20];
     % endPoint   = [80,60];
 end
 
-
-startAngle_deg = 0;
+startAngle_deg = 180;
 startState = [startPoint,startAngle_deg];
 startNode = Node(startState,controlInputSet);
 
@@ -55,6 +52,7 @@ scatter(startPoint(1),startPoint(2),200,'xg')
 scatter(endPoint(1),endPoint(2),200,'xr')
 pathLine = scatter(startPoint(1),startPoint(2),'o','DisplayName','Path');
 branchLine = scatter(startPoint(1),startPoint(2),'.','DisplayName','Path');
+
 %% Create Objects for A*
 map = Map(startNode,endNode,map);
 
@@ -65,4 +63,4 @@ a_star.Solve();
 
 %% Draw Path
 pathLoc = a_star.CreatePathLocation();
-plot(pathLoc(:,1),pathLoc(:,2),'DisplayName','Path','LineWidth',3)
+finalLine = plot(pathLoc(:,1),pathLoc(:,2),'DisplayName','Path','LineWidth',3)

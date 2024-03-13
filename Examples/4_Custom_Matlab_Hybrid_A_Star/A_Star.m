@@ -8,7 +8,7 @@ classdef A_Star<handle
         drawNow = false
         pathLine = [];
         branchLine = [];
-        closeEnoguhDistance = 1
+        closeEnoguhDistance = 2
     end
 
     methods
@@ -56,7 +56,8 @@ classdef A_Star<handle
                             else
                                 % disp("In closed set")
                             end
-                        
+                    else
+                        % disp("a")
                     end
                 end
             
@@ -71,8 +72,10 @@ classdef A_Star<handle
                     for ii = 1:length(currentNode.neighbours)
                         tempXdata = obj.branchLine.XData;
                         tempYdata = obj.branchLine.YData;
+                        if (~isempty(currentNode.statesOfBranches{ii}))
                         obj.branchLine.XData = [tempXdata,currentNode.statesOfBranches{ii}(:,1)'];
                         obj.branchLine.YData = [tempYdata,currentNode.statesOfBranches{ii}(:,2)'];
+                        end
                     end
                     drawnow();   
                 end
