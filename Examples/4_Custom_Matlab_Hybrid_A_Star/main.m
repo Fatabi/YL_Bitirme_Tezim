@@ -63,4 +63,4 @@ a_star.Solve();
 
 %% Draw Path
 pathLoc = a_star.CreatePathLocation();
-finalLine = plot(pathLoc(:,1),pathLoc(:,2),'DisplayName','Path','LineWidth',3)
+finalLine = plot(pathLoc(:,1),pathLoc(:,2),'DisplayName','Path','LineWidth',3);
